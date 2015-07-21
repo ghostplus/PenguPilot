@@ -31,6 +31,7 @@
 #include <stdint.h>
 
 #include <math/vec3.h>
+#include <math/vec.h>
 
 
 typedef struct
@@ -40,6 +41,7 @@ typedef struct
    int (*read_mag)(vec3_t *mag);
    int (*read_ultra)(float *altitude);
    int (*read_baro)(float *altitude, float *temperature);
+   int (*read_sonar)(vec_t *distance);
 }
 platform_t;
 
@@ -57,6 +59,7 @@ int platform_read_ultra(float *altitude);
 
 int platform_read_baro(float *altitude, float *temperature);
 
+int platform_read_sonar(vec_t *distance);
 
 #endif /* __PLATFORM_H__ */
 

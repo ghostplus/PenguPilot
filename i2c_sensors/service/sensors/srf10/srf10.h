@@ -9,7 +9,7 @@
  |  GNU/Linux based |___/  Multi-Rotor UAV Autopilot |
  |___________________________________________________|
   
- Platform Abstraction Implementation
+ MaxSonar I2CXL Driver Implementation
 
  Copyright (C) 2014 Tobias Simon, Integrated Communication Systems Group, TU Ilmenau
 
@@ -24,59 +24,28 @@
  GNU General Public License for more details. */
 
 
-#include "platform.h"
-
-#include <string.h>
-#include <malloc.h>
-#include <assert.h>
-#include <errno.h>
+#ifndef __SRF10_H__
+#define __SRF10_H__
 
 
-platform_t platform;
+#include <i2c/i2c.h>
+#include <math/vec.h>
 
-
-#define CHECK_DEV(x) \
-   if (!x) \
-      return -ENODEV
-
-
-int platform_read_gyro(vec3_t *gyro)
+typedef struct
 {
-   CHECK_DEV(platform.read_gyro);
-   return platform.read_gyro(gyro);
+   /* i2c device: */
+   i2c_dev_t i2c_dev0;
+   i2c_dev_t i2c_dev1;
+   i2c_dev_t i2c_dev2;
+   i2c_dev_t i2c_dev3;
 }
+srf10_t;
 
 
-int platform_read_acc(vec3_t *acc)
-{
-   CHECK_DEV(platform.read_gyro);
-   return platform.read_acc(acc);
-}
+int srf10_init(srf10_t *srf10, i2c_bus_t *bus);
+
+int srf10_read(srf10_t *srf10, vec_t *distance);
 
 
-int platform_read_mag(vec3_t *mag)
-{
-   CHECK_DEV(platform.read_mag);
-   return platform.read_mag(mag);
-}
-
-
-int platform_read_ultra(float *altitude)
-{
-   CHECK_DEV(platform.read_ultra);
-   return platform.read_ultra(altitude);
-}
-
-
-int platform_read_baro(float *altitude, float *temperature)
-{
-   CHECK_DEV(platform.read_baro);
-   return platform.read_baro(altitude, temperature);
-}
-
-int platform_read_sonar(vec_t *distance)
-{
-   CHECK_DEV(platform.read_sonar);
-   return platform.read_sonar(distance);
-}
+#endif /* __SRF10_H__ */
 

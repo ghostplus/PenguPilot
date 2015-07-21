@@ -9,7 +9,7 @@
  |  GNU/Linux based |___/  Multi-Rotor UAV Autopilot |
  |___________________________________________________|
   
- Platform Abstraction Implementation
+ I2CXL Reader Implementation
 
  Copyright (C) 2014 Tobias Simon, Integrated Communication Systems Group, TU Ilmenau
 
@@ -24,59 +24,54 @@
  GNU General Public License for more details. */
 
 
-#include "platform.h"
 
-#include <string.h>
-#include <malloc.h>
-#include <assert.h>
-#include <errno.h>
+#include <simple_thread.h>
+#include <threadsafe_types.h>
+#include <scl.h>
+#include <msgpack.h>
+#include <util.h>
+#include <math/vec.h>
+#include <pp_prio.h>
 
-
-platform_t platform;
-
-
-#define CHECK_DEV(x) \
-   if (!x) \
-      return -ENODEV
+#include "../platform/platform.h"
+#include "sonar_emitter.h"
 
 
-int platform_read_gyro(vec3_t *gyro)
+static simple_thread_t thread;
+static void *sonar_raw_socket;
+ 
+
+SIMPLE_THREAD_BEGIN(thread_func)
 {
-   CHECK_DEV(platform.read_gyro);
-   return platform.read_gyro(gyro);
+   MSGPACK_PACKER_DECL_INFUNC();
+   SIMPLE_THREAD_LOOP_BEGIN
+   {
+      msleep(30);
+      vec_t vec;
+	  vec_alloc(&vec, 4);
+	  
+      int ret = platform_read_sonar(&vec);
+      msgpack_sbuffer_clear(msgpack_buf);
+      if (status == 0)
+         msgpack_pack_array(pk, 4);
+         PACKFV(vec.ve, 4);
+      else
+         continue;
+
+		 scl_copy_send_dynamic(sonar_raw_socket, msgpack_buf->data, msgpack_buf->size);
+   }
+   SIMPLE_THREAD_LOOP_END
 }
+SIMPLE_THREAD_END
 
 
-int platform_read_acc(vec3_t *acc)
+int sonar_emitter_start(void)
 {
-   CHECK_DEV(platform.read_gyro);
-   return platform.read_acc(acc);
-}
-
-
-int platform_read_mag(vec3_t *mag)
-{
-   CHECK_DEV(platform.read_mag);
-   return platform.read_mag(mag);
-}
-
-
-int platform_read_ultra(float *altitude)
-{
-   CHECK_DEV(platform.read_ultra);
-   return platform.read_ultra(altitude);
-}
-
-
-int platform_read_baro(float *altitude, float *temperature)
-{
-   CHECK_DEV(platform.read_baro);
-   return platform.read_baro(altitude, temperature);
-}
-
-int platform_read_sonar(vec_t *distance)
-{
-   CHECK_DEV(platform.read_sonar);
-   return platform.read_sonar(distance);
+   ASSERT_ONCE();
+   THROW_BEGIN();
+   sonar_raw_socket = scl_get_socket("sonar_raw", "pub");
+   THROW_IF(sonar_raw_socket == NULL, -EIO);
+   simple_thread_start(&thread, thread_func, "sonar_emitter", PP_PRIO_1, NULL);
+   THROW_END();
 }
 

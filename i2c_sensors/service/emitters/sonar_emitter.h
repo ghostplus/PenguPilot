@@ -9,9 +9,9 @@
  |  GNU/Linux based |___/  Multi-Rotor UAV Autopilot |
  |___________________________________________________|
   
- Platform Abstraction Implementation
+ Ultrasonic Emitter Interface
 
- Copyright (C) 2014 Tobias Simon, Integrated Communication Systems Group, TU Ilmenau
+ Copyright (C) 2015 Tobias Simon, Integrated Communication Systems Group, TU Ilmenau
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -24,59 +24,12 @@
  GNU General Public License for more details. */
 
 
-#include "platform.h"
-
-#include <string.h>
-#include <malloc.h>
-#include <assert.h>
-#include <errno.h>
+#ifndef __SONAR_EMITTER_H__
+#define __SONAR_EMITTER_H__
 
 
-platform_t platform;
+int sonar_emitter_start(void);
 
 
-#define CHECK_DEV(x) \
-   if (!x) \
-      return -ENODEV
-
-
-int platform_read_gyro(vec3_t *gyro)
-{
-   CHECK_DEV(platform.read_gyro);
-   return platform.read_gyro(gyro);
-}
-
-
-int platform_read_acc(vec3_t *acc)
-{
-   CHECK_DEV(platform.read_gyro);
-   return platform.read_acc(acc);
-}
-
-
-int platform_read_mag(vec3_t *mag)
-{
-   CHECK_DEV(platform.read_mag);
-   return platform.read_mag(mag);
-}
-
-
-int platform_read_ultra(float *altitude)
-{
-   CHECK_DEV(platform.read_ultra);
-   return platform.read_ultra(altitude);
-}
-
-
-int platform_read_baro(float *altitude, float *temperature)
-{
-   CHECK_DEV(platform.read_baro);
-   return platform.read_baro(altitude, temperature);
-}
-
-int platform_read_sonar(vec_t *distance)
-{
-   CHECK_DEV(platform.read_sonar);
-   return platform.read_sonar(distance);
-}
+#endif /* __SONAR_EMITTER_H__ */
 

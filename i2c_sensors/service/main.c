@@ -39,6 +39,8 @@
 #include "emitters/ultra_emitter.h"
 #include "emitters/mag_emitter.h"
 
+#include "emitters/sonar_emitter.h
+
 
 #define REALTIME_PERIOD 0.005
 
@@ -85,7 +87,9 @@ SERVICE_MAIN_BEGIN("i2c_sensors", PP_PRIO_1)
    if (platform.read_baro)
       baro_emitter_start();
    if (platform.read_ultra)
-      ultra_emitter_start();
+      ultra_emitter_start();	  
+   if (platform.read_sonar)
+      sonar_emitter_start();	  
 
    thread->name = "gyro_acc";
    thread->running = 1;

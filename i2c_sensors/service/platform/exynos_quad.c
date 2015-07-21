@@ -41,6 +41,8 @@
 #include "../sensors/i2cxl/i2cxl.h"
 #include "../sensors/ms5611/ms5611.h"
 
+#include "../sensors/srf10/srf10.h"
+
 
 
 static i2c_bus_t i2c_bus;
@@ -107,6 +109,13 @@ static int read_baro(float *altitude, float *temperature)
    THROW_END();
 }
 
+static int read_sonar(vec_t *distance)
+{ 
+   THROW_BEGIN();
+   THROW_ON_ERR(srf10_read(&srf10, &distance));
+   THROW_END();	
+}
+
 
 int exynos_quad_init(platform_t *plat)
 {
@@ -134,6 +143,10 @@ int exynos_quad_init(platform_t *plat)
    LOG(LL_INFO, "initializing ms5611 barometric pressure sensor");
    THROW_ON_ERR(ms5611_init(&ms5611, &i2c_bus, MS5611_OSR4096, MS5611_OSR4096));
    plat->read_baro = read_baro;
+   
+   LOG(LL_INFO, "initializing srf10 ultrasonic sensors (sonar)");
+   THROW_ON_ERR(srf10_init(&srf10, &i2c_bus));
+   plat->read_sonar = read_sonar;
 
    LOG(LL_INFO, "exynos_quadro sensor platform initialized");
    THROW_END();
