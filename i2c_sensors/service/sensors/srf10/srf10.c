@@ -9,7 +9,7 @@
  |  GNU/Linux based |___/  Multi-Rotor UAV Autopilot |
  |___________________________________________________|
   
- MaxSonar I2CXL Driver Implementation
+ SRF10 Driver Implementation
 
  Copyright (C) 2014 Tobias Simon, Integrated Communication Systems Group, TU Ilmenau
 
@@ -29,10 +29,10 @@
 #include <util.h>
 
 //four ultrasonic sensors SRF10
-#define SRF10_ADDRESS0       0x78
-#define SRF10_ADDRESS1       0x80
-#define SRF10_ADDRESS2       0x82
-#define SRF10_ADDRESS3       0x84
+#define SRF10_ADDRESS0       0x71
+#define SRF10_ADDRESS1       0x72
+#define SRF10_ADDRESS2       0x73
+#define SRF10_ADDRESS3       0x74
 
 #define SRF10_CMD_REGISTER  0x00
 #define SRF10_RANGE_COMMAND 0x51

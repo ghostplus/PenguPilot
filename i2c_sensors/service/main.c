@@ -89,7 +89,7 @@ SERVICE_MAIN_BEGIN("i2c_sensors", PP_PRIO_1)
    if (platform.read_ultra)
       ultra_emitter_start();	  
    if (platform.read_sonar)
-      sonar_emitter_start();	  
+      sonar_emitter_start();
 
    thread->name = "gyro_acc";
    thread->running = 1;

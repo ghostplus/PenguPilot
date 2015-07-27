@@ -9,7 +9,7 @@
  |  GNU/Linux based |___/  Multi-Rotor UAV Autopilot |
  |___________________________________________________|
   
- MaxSonar I2CXL Driver Implementation
+ SRF10 Driver Implementation
 
  Copyright (C) 2014 Tobias Simon, Integrated Communication Systems Group, TU Ilmenau
 
